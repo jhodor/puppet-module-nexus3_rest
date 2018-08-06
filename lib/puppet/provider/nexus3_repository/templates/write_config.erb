@@ -38,5 +38,9 @@ docker.set('httpsPort', '<%= resource[:httpsport] %>')
 <%- end -%>
 docker.set('v1Enabled', '<%= resource[:v1enabled] %>')
 docker.set('forceBasicAuth','<%= resource[:forcebasicauth] %>')
+<%- if resource[:type] == :proxy -%>
+def dockerproxy = config.attributes('dockerProxy')
+dockerproxy.set('indexType', '<%= resource[:indextype] %>')
+<%- end -%>
 <%- end -%>
 repository.repositoryManager.update(config)
