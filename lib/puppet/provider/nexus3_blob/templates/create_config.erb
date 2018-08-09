@@ -1,3 +1,5 @@
-<%- unless resource[:blob_name].empty? or resource[:blob_path].empty? -%>
-def rawStore = blobStore.createFileBlobStore(resource[:blob_name], resource[:blob_path])
-<%- end -%>
+def blobName = '<%= resource[:blob_name] %>'
+def blobPath = '<%= resource[:blob_path] %>'
+def blobStoreManager = blobStore.getProperty('blobStoreManager')
+def blobExist = blobStoreManager.exists(blobName)
+if ( ! blobExist ) { def rawStore = blobStore.createFileBlobStore(blobName, blobPath) }
