@@ -1,0 +1,14 @@
+<%- if resource[:type] == 'rutauth' -%>
+import org.sonatype.nexus.capability.*
+def capRegistry = container.lookup(CapabilityRegistry.class)
+def capReferences = capRegistry.getAll()
+def activeCaps = []
+capReferences.each { activeCaps <<  it.context().type().toString() }
+if ( ! activeCaps.contains('rutauth') ) {
+  def capType = new CapabilityType('rutauth')
+  def enabled = true
+  def notes = ''
+  def properties = [ 'httpHeader': '<%= resource[:rutauth_header] %>' ]
+  capRegistry.add(capType, enabled, notes, properties)
+}
+<%- end -%>
