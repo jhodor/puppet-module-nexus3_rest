@@ -1,0 +1,3 @@
+<%- unless resource[:blob_name].empty? or resource[:blob_path].empty? -%>
+def rawStore = blobStore.createFileBlobStore(resource[:blob_name], resource[:blob_path])
+<%- end -%>

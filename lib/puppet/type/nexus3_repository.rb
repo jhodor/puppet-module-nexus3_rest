@@ -31,21 +31,27 @@ Puppet::Type.newtype(:nexus3_repository) do
     defaultto 'default'
   end
 
- newproperty(:httpport) do
+  newproperty(:httpport) do
     desc 'Docker repositories have Repository Connectors for http and https.'
   end
    newproperty(:httpsport) do
     desc 'Docker repositories have Repository Connectors for http and https.'
   end
-   newproperty(:forcebasicauth) do
+  newproperty(:forcebasicauth) do
     desc 'Disable to allow anonymous pull (Note: also requires Docker Bearer Token Realm to be activated)'
     defaultto do @resource[:provider_type] == :docker ? :true : nil end
     newvalues(:true, :false)
   end
-   newproperty(:v1enabled) do
+  newproperty(:v1enabled) do
     desc 'Allow clients to use the V1 API to interact with this Repository'
     defaultto do @resource[:provider_type] == :docker ? :true : nil end
     newvalues(:true, :false)
+  end
+
+  newproperty(:indextype) do
+    desc 'Docker index type. Only useful for docker-proxy-type repositories.'
+    defaultto do @resource[:provider_type] == :docker and @resource[:type] == :proxy ? 'REGISTRY' : nil end
+    newvalues('REGISTRY', 'HUB', 'CUSTOM')
   end
 
   newproperty(:version_policy) do
@@ -76,8 +82,8 @@ Puppet::Type.newtype(:nexus3_repository) do
   # yum-specific #
   newproperty(:depth) do
     desc 'Depth in directory tree where repodata structure is created.'
+    defaultto do @resource[:provider_type] == :yum and @resource[:type] == :hosted ? 0 : nil end
     newvalues(0, 1, 2, 3, 4, 5)
-    defaultto(0)
   end
 
   # proxy-specific #
