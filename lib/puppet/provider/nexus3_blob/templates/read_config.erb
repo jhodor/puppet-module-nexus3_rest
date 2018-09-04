@@ -1,0 +1,12 @@
+def blobStoreManager = blobStore.getProperty('blobStoreManager')
+def blobstores = blobStoreManager.browse()
+def infos = blobstores.findResults { blobstore ->
+  def config = blobstore.getBlobStoreConfiguration()
+  def attr = config.getAttributes()
+  [
+    name : config.name,
+    blob_name : config.name,
+    blob_path : attr.file.path,
+  ]
+}
+return groovy.json.JsonOutput.toJson(infos)

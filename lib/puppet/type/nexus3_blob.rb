@@ -1,7 +1,7 @@
 require 'puppet/property/boolean'
 
-Puppet::Type.newtype(:nexus3_realm_settings) do
-  @doc = 'Manages Nexus 3 Realm settings.'
+Puppet::Type.newtype(:nexus3_blob) do
+  @doc = 'Manages Nexus 3 blob settings.'
 
   newparam(:name, namevar: true) do
     desc 'Name of the configuration.'
@@ -21,4 +21,7 @@ Puppet::Type.newtype(:nexus3_realm_settings) do
     end
   end
 
+  autorequire(:file) do
+    Nexus3::Config::file_path
+  end
 end

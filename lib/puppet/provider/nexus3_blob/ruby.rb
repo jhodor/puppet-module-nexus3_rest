@@ -1,4 +1,3 @@
-require 'erb'
 require File.join(File.dirname(__FILE__), '..', 'nexus3_base')
 
 Puppet::Type.type(:nexus3_blob).provide(:ruby, parent: Puppet::Provider::Nexus3Base) do

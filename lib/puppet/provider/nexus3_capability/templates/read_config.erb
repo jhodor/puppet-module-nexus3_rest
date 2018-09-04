@@ -1,3 +1,12 @@
-return groovy.json.JsonOutput.toJson([
-  names : [],
-]);
+def capRegistry = container.lookup(org.sonatype.nexus.capability.CapabilityRegistry.class)
+def capReferences = capRegistry.getAll()
+infos = capReferences.collect { capReference ->
+  def type = capReference.context().type().toString()
+  def rutauth_header = ( type == 'rutauth' ) ? capReference.context().properties().get('httpHeader') : null
+  [
+    name: type,
+    type: type,
+    rutauth_header: rutauth_header,
+  ]
+}
+return groovy.json.JsonOutput.toJson(infos)

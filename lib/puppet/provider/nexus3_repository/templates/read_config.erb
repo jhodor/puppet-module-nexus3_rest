@@ -14,7 +14,11 @@ def infos = repositories.findResults { repository ->
   def yum   = config.attributes('yum')
   def httpclient = config.attributes('httpclient')
   def authentication = httpclient.child('authentication')
+  def docker = config.attributes('docker')
+  def httpport = docker.get('httpPort') ? docker.get('httpPort').toString() : null
+  def httpsport = docker.get('httpsPort') ? docker.get('httpsPort').toString() : null
   def dockerProxy = config.attributes('dockerProxy')
+  def yumdepth = yum ? ( yum.get('repodataDepth') ? yum.get('repodataDepth').toString() : null ) : null
   [
     name: config.repositoryName,
     type: type,
@@ -31,8 +35,12 @@ def infos = repositories.findResults { repository ->
     remote_password: authentication.get('password'),
     remote_ntlm_host: authentication.get('ntlmHost'),
     remote_ntlm_domain: authentication.get('ntlmDomain'),
-    depth: yum.get('repodataDepth'),
+    depth: yumdepth,
     indextype: dockerProxy.get('indexType'),
+    httpport: httpport,
+    httpsport: httpsport,
+    forcebasicauth: docker.get('forceBasicAuth'),
+    v1enabled: docker.get('v1Enabled'),
   ]
 }
 return groovy.json.JsonOutput.toJson(infos)

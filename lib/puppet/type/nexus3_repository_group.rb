@@ -23,6 +23,23 @@ Puppet::Type.newtype(:nexus3_repository_group) do
     defaultto 'default'
   end
 
+  newproperty(:httpport) do
+    desc 'Docker repositories have Repository Connectors for http and https.'
+  end
+  newproperty(:httpsport) do
+    desc 'Docker repositories have Repository Connectors for http and https.'
+  end
+  newproperty(:forcebasicauth) do
+    desc 'Disable to allow anonymous pull (Note: also requires Docker Bearer Token Realm to be activated)'
+    defaultto do @resource[:provider_type] == :docker ? :true : nil end
+    newvalues(:true, :false)
+  end
+  newproperty(:v1enabled) do
+    desc 'Allow clients to use the V1 API to interact with this Repository'
+    defaultto do @resource[:provider_type] == :docker ? :true : nil end
+    newvalues(:true, :false)
+  end
+
   newproperty(:online, parent: Puppet::Property::Boolean) do
     desc 'When repository is enabled or not to receive connections.'
     newvalues(:true, :false)
