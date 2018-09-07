@@ -19,6 +19,11 @@ def infos = repositories.findResults { repository ->
   def httpsport = docker.get('httpsPort') ? docker.get('httpsPort').toString() : null
   def dockerProxy = config.attributes('dockerProxy')
   def yumdepth = yum ? ( yum.get('repodataDepth') ? yum.get('repodataDepth').toString() : null ) : null
+  def negativeCache = config.attributes('negativeCache')
+  def content_max_age = ( proxy != null ) ? ( proxy.get('contentMaxAge') ? proxy.get('contentMaxAge') : null ) : null
+  def metadata_max_age = ( proxy != null ) ? ( proxy.get('metadataMaxAge') ? proxy.get('metadataMaxAge') : null ) : null
+  def negative_cache_enabled = negativeCache.get('enabled') ? negativeCache.get('enabled') : null
+  def negative_cache_time_to_live = negativeCache.get('timeToLive') ? negativeCache.get('timeToLive') : null
   [
     name: config.repositoryName,
     type: type,
@@ -41,6 +46,10 @@ def infos = repositories.findResults { repository ->
     httpsport: httpsport,
     forcebasicauth: docker.get('forceBasicAuth'),
     v1enabled: docker.get('v1Enabled'),
+    content_max_age: content_max_age,
+    metadata_max_age: metadata_max_age,
+    negative_cache_enabled: negative_cache_enabled,
+    negative_cache_time_to_live: negative_cache_time_to_live,
   ]
 }
 return groovy.json.JsonOutput.toJson(infos)

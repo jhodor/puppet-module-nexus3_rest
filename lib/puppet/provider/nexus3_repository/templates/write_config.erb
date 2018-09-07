@@ -6,7 +6,13 @@ storage.set('strictContentTypeValidation', <%= resource[:strict_content_type_val
 storage.set('writePolicy', '<%= WRITE_POLICY_MAPPING[resource[:write_policy]] %>')
 <%- elsif resource[:type] == :proxy -%>
 def proxy = config.attributes('proxy')
+def dockerproxy = config.attributes('dockerProxy')
+def negativeCache = config.attributes('negativeCache')
 proxy.set('remoteUrl', '<%= resource[:remote_url] %>')
+proxy.set('contentMaxAge', '<%= resource[:content_max_age] %>')
+proxy.set('metadataMaxAge', '<%= resource[:metadata_max_age] %>')
+negativeCache.set('enabled', '<%= resource[:negative_cache_enabled] %>')
+negativeCache.set('timeToLive', '<%= resource[:negative_cache_time_to_live] %>')
 <%- end -%>
 <%- if resource[:remote_auth_type] == :none -%>
 config.getAttributes().remove('httpclient')
@@ -39,7 +45,6 @@ docker.set('httpsPort', '<%= resource[:httpsport] %>')
 docker.set('v1Enabled', '<%= resource[:v1enabled] %>')
 docker.set('forceBasicAuth','<%= resource[:forcebasicauth] %>')
 <%- if resource[:type] == :proxy -%>
-def dockerproxy = config.attributes('dockerProxy')
 dockerproxy.set('indexType', '<%= resource[:indextype] %>')
 <%- end -%>
 <%- end -%>

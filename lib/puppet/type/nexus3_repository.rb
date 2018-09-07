@@ -16,7 +16,7 @@ Puppet::Type.newtype(:nexus3_repository) do
 
   newproperty(:provider_type) do
     desc 'The content provider of the repository'
-    newvalues(:bower, :docker, :gitlfs, :maven2, :npm, :nuget, :pypi, :raw, :rubygems, :yum)
+    newvalues(:bower, :docker, :gitlfs, :maven2, :npm, :nuget, :pypi, :raw, :rubygems, :yum, :composer)
   end
 
   newproperty(:online, parent: Puppet::Property::Boolean) do
@@ -39,13 +39,15 @@ Puppet::Type.newtype(:nexus3_repository) do
   end
   newproperty(:forcebasicauth) do
     desc 'Disable to allow anonymous pull (Note: also requires Docker Bearer Token Realm to be activated)'
-    defaultto do @resource[:provider_type] == :docker ? :true : nil end
     newvalues(:true, :false)
+    defaultto do @resource[:provider_type] == :docker ? :true : nil end
+    munge { |value| super(value).to_s.intern }
   end
   newproperty(:v1enabled) do
     desc 'Allow clients to use the V1 API to interact with this Repository'
-    defaultto do @resource[:provider_type] == :docker ? :true : nil end
     newvalues(:true, :false)
+    defaultto do @resource[:provider_type] == :docker ? :true : nil end
+    munge { |value| super(value).to_s.intern }
   end
 
   newproperty(:indextype) do
@@ -128,6 +130,32 @@ Puppet::Type.newtype(:nexus3_repository) do
   newproperty(:remote_ntlm_domain) do
     desc 'The Windows NT Lan Manager domain for authentication to the remote repository. ' \
          'Only useful for proxy-type repositories.'
+  end
+
+  newproperty(:content_max_age) do
+    desc 'How long (in minutes) to cache artifacts before rechecking the remote repository. Release repositories should use -1. ' \
+         'Only useful for proxy-type repositories.'
+    defaultto do @resource[:type] == :proxy ? '1440' : nil end
+  end
+
+  newproperty(:metadata_max_age) do
+    desc 'How long (in minutes) to cache metadata before rechecking the remote repository. ' \
+         'Only useful for proxy-type repositories.'
+    defaultto do @resource[:type] == :proxy ? '1440' : nil end
+  end
+
+  newproperty(:negative_cache_enabled) do
+    desc 'Cache responses for content not present in the proxied repository. ' \
+         'Only useful for proxy-type repositories.'
+    newvalues(:true, :false)
+    defaultto do @resource[:type] == :proxy ? :true : nil end
+    munge { |value| super(value).to_s.intern }
+  end
+
+  newproperty(:negative_cache_time_to_live) do
+    desc 'How long to cache the fact that a file was not found in the repository (in minutes). ' \
+         'Only useful for proxy-type repositories.'
+    defaultto do @resource[:type] == :proxy ? '1440' : nil end
   end
 
   validate do
